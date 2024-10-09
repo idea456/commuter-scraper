@@ -4,64 +4,149 @@ import (
 	"bytes"
 	"encoding/json"
 	"fmt"
+	"log/slog"
+	"net"
 	"net/http"
-	"os"
+	"time"
 )
 
-type SolverServer struct {
-	url string
+type Solver struct {
+	client  *http.Client
+	url     string
+	session string
 }
-
-type RequestPage struct {
+type SolverRequest struct {
 	Cmd        string `json:"cmd"`
 	Url        string `json:"url"`
 	MaxTimeout int    `json:"maxTimeout"`
+	Session    string `json:"session"`
 }
 
-type ResponsePage struct {
-	Solution ResponseSolutionPage `json:"solution"`
+type SolverSolutionResponse struct {
+	Response string `json:"response"`
 }
 
-type ResponseSolutionPage struct {
-	Response string         `json:"response"`
-	Cookies  map[string]any `json:"cookies"`
+type SolverResponse struct {
+	Solution SolverSolutionResponse `json:"solution"`
 }
 
-func pingSolverServer(url string) error {
-	options := RequestPage{
+type SessionResponse struct {
+	Session string `json:"session"`
+}
+
+func NewSolver(solverUrl string) (*Solver, error) {
+	client := &http.Client{
+		Timeout: 18000000 * time.Second,
+		Transport: &http.Transport{
+			DialContext: (&net.Dialer{
+				Timeout:   180000000 * time.Second,
+				KeepAlive: 6000000 * time.Second,
+				DualStack: true,
+			}).DialContext,
+		},
+	}
+
+	solver := Solver{
+		client: client,
+		url:    solverUrl,
+	}
+
+	session, err := solver.RequestSession()
+	if err != nil {
+		return nil, err
+	}
+	solver.session = session
+
+	return &solver, nil
+}
+
+func (s *Solver) RequestSession() (string, error) {
+	slog.Debug("requesting new session...")
+	options := SolverRequest{
+		Cmd: "sessions.create",
+	}
+	optionsB, err := json.Marshal(options)
+	if err != nil {
+		return "", err
+	}
+
+	req, err := http.NewRequest("POST", s.url, bytes.NewBuffer(optionsB))
+	if err != nil {
+		return "", err
+	}
+
+	req.Header.Set("Content-Type", "application/json")
+
+	resp, err := s.client.Do(req)
+	if err != nil {
+		slog.Error(err.Error())
+		return "", err
+	}
+
+	var body SessionResponse
+	json.NewDecoder(resp.Body).Decode(&body)
+	return body.Session, nil
+}
+
+// func (s *Solver) RequestPageWithCookie(pageUrl string) (string, error) {
+
+// }
+
+func (s *Solver) RequestPage(pageUrl string) (string, error) {
+	slog.Debug(fmt.Sprintf("requesting new page %s...", pageUrl))
+
+	options := SolverRequest{
 		Cmd:        "request.get",
-		Url:        "http://google.com",
-		MaxTimeout: 60000,
+		Url:        pageUrl,
+		MaxTimeout: 9999999999,
+		Session:    s.session,
+	}
+	optionsB, err := json.Marshal(options)
+	if err != nil {
+		return "", err
+	}
+	req, err := http.NewRequest("POST", s.url, bytes.NewBuffer(optionsB))
+	if err != nil {
+		return "", err
 	}
 
-	optionB, err := json.Marshal(options)
+	req.Header.Set("Content-Type", "application/json")
+
+	resp, err := s.client.Do(req)
+	if err != nil {
+		return "", err
+	}
+
+	var body SolverResponse
+	err = json.NewDecoder(resp.Body).Decode(&body)
+	if err != nil {
+		return "", err
+	}
+
+	return body.Solution.Response, nil
+}
+
+func (s *Solver) DestroySession() error {
+	options := SolverRequest{
+		Cmd:     "sessions.destroy",
+		Session: s.session,
+	}
+	optionsB, err := json.Marshal(options)
 	if err != nil {
 		return err
 	}
 
-	req, err := http.NewRequest("POST", url, bytes.NewBuffer(optionB))
+	req, err := http.NewRequest("POST", s.url, bytes.NewBuffer(optionsB))
 	if err != nil {
 		return err
 	}
 
-	_, err = http.DefaultClient.Do(req)
+	req.Header.Set("Content-Type", "application/json")
+
+	_, err = s.client.Do(req)
 	if err != nil {
 		return err
 	}
 
 	return nil
-}
-
-func NewSolverServer() (*SolverServer, error) {
-	url := os.Getenv("SCRAPE_SOLVER_URL")
-	if url == "" {
-		return nil, fmt.Errorf("You forgot to set SCRAPE_SOLVER_URL")
-	}
-
-	err := pingSolverServer(url)
-	if err != nil {
-		return nil, fmt.Errorf("unable to ping solver server, are you sure the server is still alive?: %w", err)
-	}
-
-	return &SolverServer{url: url}, nil
 }

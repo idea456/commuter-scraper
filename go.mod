@@ -3,28 +3,43 @@ module github.com/idea456/commuter-scraper
 go 1.23
 
 require (
-	github.com/gocolly/colly/v2 v2.1.0
-	github.com/joho/godotenv v1.5.1
+	github.com/PuerkitoBio/goquery v1.10.0
+	gocloud.dev v0.39.0
 )
 
 require (
-	github.com/PuerkitoBio/goquery v1.10.0 // indirect
 	github.com/andybalholm/cascadia v1.3.2 // indirect
-	github.com/antchfx/htmlquery v1.2.3 // indirect
-	github.com/antchfx/xmlquery v1.2.4 // indirect
-	github.com/antchfx/xpath v1.1.8 // indirect
-	github.com/caffix/cloudflare-roundtripper v0.0.0-20181218223503-4c29d231c9cb // indirect
-	github.com/gobwas/glob v0.2.3 // indirect
+	github.com/aws/aws-sdk-go v1.55.5 // indirect
+	github.com/aws/aws-sdk-go-v2 v1.30.3 // indirect
+	github.com/aws/aws-sdk-go-v2/aws/protocol/eventstream v1.6.3 // indirect
+	github.com/aws/aws-sdk-go-v2/config v1.27.27 // indirect
+	github.com/aws/aws-sdk-go-v2/credentials v1.17.27 // indirect
+	github.com/aws/aws-sdk-go-v2/feature/ec2/imds v1.16.11 // indirect
+	github.com/aws/aws-sdk-go-v2/feature/s3/manager v1.17.10 // indirect
+	github.com/aws/aws-sdk-go-v2/internal/configsources v1.3.15 // indirect
+	github.com/aws/aws-sdk-go-v2/internal/endpoints/v2 v2.6.15 // indirect
+	github.com/aws/aws-sdk-go-v2/internal/ini v1.8.0 // indirect
+	github.com/aws/aws-sdk-go-v2/internal/v4a v1.3.15 // indirect
+	github.com/aws/aws-sdk-go-v2/service/internal/accept-encoding v1.11.3 // indirect
+	github.com/aws/aws-sdk-go-v2/service/internal/checksum v1.3.17 // indirect
+	github.com/aws/aws-sdk-go-v2/service/internal/presigned-url v1.11.17 // indirect
+	github.com/aws/aws-sdk-go-v2/service/internal/s3shared v1.17.15 // indirect
+	github.com/aws/aws-sdk-go-v2/service/s3 v1.58.3 // indirect
+	github.com/aws/aws-sdk-go-v2/service/sso v1.22.4 // indirect
+	github.com/aws/aws-sdk-go-v2/service/ssooidc v1.26.4 // indirect
+	github.com/aws/aws-sdk-go-v2/service/sts v1.30.3 // indirect
+	github.com/aws/smithy-go v1.20.3 // indirect
 	github.com/golang/groupcache v0.0.0-20210331224755-41bb18bfe9da // indirect
-	github.com/golang/protobuf v1.5.4 // indirect
-	github.com/kennygrant/sanitize v1.2.4 // indirect
-	github.com/robertkrimen/otto v0.4.0 // indirect
-	github.com/saintfish/chardet v0.0.0-20120816061221-3af4cd4741ca // indirect
-	github.com/temoto/robotstxt v1.1.1 // indirect
-	gocloud.dev v0.39.0 // indirect
+	github.com/google/wire v0.6.0 // indirect
+	github.com/googleapis/gax-go/v2 v2.13.0 // indirect
+	github.com/jmespath/go-jmespath v0.4.0 // indirect
+	go.opencensus.io v0.24.0 // indirect
 	golang.org/x/net v0.29.0 // indirect
+	golang.org/x/sys v0.25.0 // indirect
 	golang.org/x/text v0.18.0 // indirect
-	google.golang.org/appengine v1.6.6 // indirect
+	golang.org/x/xerrors v0.0.0-20240716161551-93cc26a95ae9 // indirect
+	google.golang.org/api v0.191.0 // indirect
+	google.golang.org/genproto/googleapis/rpc v0.0.0-20240812133136-8ffd90a71988 // indirect
+	google.golang.org/grpc v1.65.0 // indirect
 	google.golang.org/protobuf v1.34.2 // indirect
-	gopkg.in/sourcemap.v1 v1.0.5 // indirect
 )
